@@ -34,19 +34,39 @@ export default function App() {
         initialValue="<p>Hello Editor</p>"
         init={{
           height: 500,
+          force_br_newlines: false,
+          force_p_newlines: false,
+          browser_spellcheck: true,
+          forced_root_block: "",
           menubar: false,
+          statusbar: false,
+          toolbar: 'spellchecker',
           plugins: [
             'advlist autolink lists link image charmap print preview anchor',
             'searchreplace visualblocks code fullscreen',
             'insertdatetime media table paste code help wordcount',
           ],
-          toolbar:
-            'undo redo | formatselect | ' +
-            'bold italic backcolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help' +
-            ' | spellchecker',
+          // toolbar:
+          //   'undo redo | formatselect | ' +
+          //   'bold italic backcolor | alignleft aligncenter ' +
+          //   'alignright alignjustify | bullist numlist outdent indent | ' +
+          //   'removeformat | help' +
+          //   ' | spellchecker',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+
+          spellchecker_callback: function (method, text, success, failure) {
+            var words = text.match(this.getWordCharPattern());
+            if (method === "spellcheck") {
+              var suggestions = {};
+              for (var i = 0; i < words.length; i++) {
+                suggestions[words[i]] = ["First", "Second"];
+              }
+              success({ words: suggestions, dictionary: [ ] });
+            } else if (method === "addToDictionary") {
+              // Add word to dictionary here
+              success();
+            }
+          }
         }}
       />{' '}
       {text}{' '}
