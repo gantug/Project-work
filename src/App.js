@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Editor } from '@tinymce/tinymce-react';
+import { Editor, tinymce } from '@tinymce/tinymce-react';
 import axios from 'axios';
 
 export default function App() {
@@ -27,7 +27,7 @@ export default function App() {
   const wrong = lastSentence.filter((word) => !word.lemma.includes('+'));
   console.log('wrong words:', wrong);
   return (
-    <>
+    <>\
       <Editor
         onInit={(evt, editor) => setText(editor.getContent({ format: 'text' }))}
         onEditorChange={onEditorChange}
@@ -41,19 +41,34 @@ export default function App() {
           menubar: false,
           statusbar: false,
           toolbar: 'spellchecker',
-          plugins: [
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste code help wordcount',
+          plugins: ['spellchecker',
           ],
-          // toolbar:
-          //   'undo redo | formatselect | ' +
-          //   'bold italic backcolor | alignleft aligncenter ' +
-          //   'alignright alignjustify | bullist numlist outdent indent | ' +
-          //   'removeformat | help' +
-          //   ' | spellchecker',
+          toolbar: 'spellchecker',
+          // spellchecker_rpc_url: 'spellchecker.php',
+          spellchecker_languages: 'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
+                                  'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
 
+          // spellchecker_callback: function (method, text, success, failure) {
+          //   if (method === 'spellcheck') {
+          //     tinymce.util.JSONRequest.sendRPC({
+          //       url: '/nlp-web-demo/process?text=""',
+          //       method: 'spellcheck',
+          //       params: {
+          //         lang: this.getLanguage(),
+          //         words: text.match(this.getWordCharPattern())
+          //       },
+          //       success: function (result) {
+          //         success(result);
+          //       },
+          //       error: function (error, xhr) {
+          //         failure("Spellcheck error:" + xhr.status);
+          //       }
+          //     });
+          //   } else {
+          //     failure('Unsupported spellcheck method');
+          //   }
+          // }
           spellchecker_callback: function (method, text, success, failure) {
             var words = text.match(this.getWordCharPattern());
             if (method === "spellcheck") {
@@ -67,6 +82,7 @@ export default function App() {
               success();
             }
           }
+          
         }}
       />{' '}
       {text}{' '}
